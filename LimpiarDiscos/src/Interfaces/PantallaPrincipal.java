@@ -7,6 +7,7 @@ package Interfaces;
 
 import Controlador.Controlador;
 import java.io.File;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
@@ -44,7 +45,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         botonEspacioLibre = new javax.swing.JButton();
         botonCarpetasVacias = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        botonGrandes = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
 
@@ -72,7 +73,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jButton1.setText("Borrar archivos por categoria");
 
-        jButton2.setText("Borrar archivos de gran tamaño");
+        botonGrandes.setText("Borrar archivos de gran tamaño");
+        botonGrandes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonGrandesActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Borrar ficheros antiguos");
 
@@ -93,7 +99,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(botonEspacioLibre, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
                     .addComponent(botonCarpetasVacias, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botonGrandes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -109,14 +115,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(botonGrandes)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
                 .addComponent(jButton4)
                 .addGap(18, 18, 18)
                 .addComponent(botonCarpetasVacias)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -154,12 +160,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void botonCarpetasVaciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCarpetasVaciasActionPerformed
         // TODO add your handling code here:
-        int index = this.unidad.getSelectedIndex();
+        File index = (File) this.unidad.getSelectedItem();
         int opcionPanel = JOptionPane.showConfirmDialog(this,
                 "¿quieres borrar carpetas vacias?", "Borrado de carpetas",
                 JOptionPane.YES_NO_OPTION);
         if (opcionPanel == JOptionPane.YES_OPTION) {
-            int contador = con.borrarDirectoriosVacios(index);
+            int contador = con.borrarDirectoriosVacios(index.getAbsolutePath());
             if (contador > 0) {
                 JOptionPane.showMessageDialog(this, "se han eliminado " + contador
                         + " carpetas vacías", "Borrado de carpetas",
@@ -170,9 +176,27 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
             }
         } else if (opcionPanel == JOptionPane.NO_OPTION) {
-            JOptionPane.showMessageDialog(this, "N-No es como si quisiese borrarlas b-baka");
+            JOptionPane.showMessageDialog(this, "Pues ok");
         }
     }//GEN-LAST:event_botonCarpetasVaciasActionPerformed
+
+    private void botonGrandesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGrandesActionPerformed
+        // TODO add your handling code here:
+        Integer[] lanzar = new Integer[] {1,2,5,10};
+        int seleccion = JOptionPane.showOptionDialog(this, "¿De cuantos gigas?"
+                , "borrado de archivos grandes", JOptionPane.YES_NO_OPTION ,
+                JOptionPane.QUESTION_MESSAGE,null, lanzar, "1");
+        
+        if(seleccion!=-1){
+            File archivo = (File) this.unidad.getSelectedItem();
+            List<File> borrarDirectoriosTamanio = con.borrarDirectoriosTamanio(archivo.getAbsolutePath(),lanzar[seleccion]);
+            for (File file : borrarDirectoriosTamanio) {
+                System.out.println(file+"----"+file.length());
+            }
+        }
+        
+        
+    }//GEN-LAST:event_botonGrandesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -212,8 +236,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonCarpetasVacias;
     private javax.swing.JButton botonEspacioLibre;
+    private javax.swing.JButton botonGrandes;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;

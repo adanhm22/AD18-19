@@ -125,7 +125,7 @@ public class PantallaBorrado extends javax.swing.JDialog {
         if(lista.getSelectedValuesList().isEmpty()){
             JOptionPane.showMessageDialog(this, "no has seleccionado ningun archivo",seleccion,JOptionPane.ERROR_MESSAGE);
         }else{
-            con.borrarArchivos(lista.getSelectedValuesList());
+            //con.borrarArchivos(lista.getSelectedValuesList());
         }
     }//GEN-LAST:event_botonBorrarActionPerformed
 
