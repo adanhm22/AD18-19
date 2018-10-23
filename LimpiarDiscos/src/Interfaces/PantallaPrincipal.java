@@ -26,7 +26,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         initComponents();
         this.setTitle("Limpieza de discos");
         con = new Controlador();
-        this.unidad.setModel(new DefaultComboBoxModel(File.listRoots()));
+        this.unidad.setModel(new DefaultComboBoxModel(new File[]
+        {new File("/home/adan/Descargas")}));
     }
 
     /**
@@ -189,10 +190,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         
         if(seleccion!=-1){
             File archivo = (File) this.unidad.getSelectedItem();
-            List<File> borrarDirectoriosTamanio = con.borrarDirectoriosTamanio(archivo.getAbsolutePath(),lanzar[seleccion]);
-            for (File file : borrarDirectoriosTamanio) {
-                System.out.println(file+"----"+file.length());
-            }
+            List<File> listarDirectoriosTamanio = con.listarDirectoriosTamanio(archivo,lanzar[seleccion]);
+            new PantallaBorrado(this, true, con, listarDirectoriosTamanio).setVisible(true);
         }
         
         

@@ -5,7 +5,6 @@
  */
 package Controlador;
 
-import Interfaces.BarraProgreso;
 import Interfaces.PantallaPrincipal;
 import java.io.File;
 import java.util.ArrayList;
@@ -25,9 +24,9 @@ public class Controlador {
         return raiz.getFreeSpace() / 1024 / 1024 / 1024;
     }
 
-    public int borrarDirectoriosVacios(String unidad) {
-        File raiz = new File(unidad);
-        this.contador = 0;
+    public int borrarDirectoriosVacios(String padre){
+        File raiz = new File(padre);
+        this.contador=0;
         return this.borrarDirectoriosVacios(raiz);
     }
 
@@ -44,22 +43,28 @@ public class Controlador {
                 }
             }
         }
+        
         return this.contador;
     }
 
-    public List<File> borrarDirectoriosTamanio(String unidad, int tamanio) {
-        File raiz = new File(unidad);
+    public List<File> listarDirectoriosTamanio(File raiz, int tamanio) {
+
         List<File> archivos = new ArrayList<>();
-        return this.borrarDirectoriosTamanio(raiz, tamanio, archivos);
+        return this.listarDirectoriosTamanio(raiz, tamanio, archivos);
     }
 
-    /* public void borrarArchivos(List<String> selectedValuesList) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }*/
-    private List<File> borrarDirectoriosTamanio(File raiz, int tamanio, List archivos) {
-        /* BarraProgreso bp = new BarraProgreso(null, true, raiz.listFiles().length);
-        Thread hilo = new Thread(bp);
-        hilo.start();*/
+    public int borrarArchivos(List<File> selectedValuesList) {
+    int numeroBorrados = 0;
+        for (File file : selectedValuesList) {
+            if(file.delete())
+                numeroBorrados++;
+        }
+        return numeroBorrados;
+    }
+    
+    
+    private List<File> listarDirectoriosTamanio(File raiz, int tamanio, List archivos) {
+
         for (File list : raiz.listFiles()) {
 
             if (list != null) {
@@ -67,18 +72,16 @@ public class Controlador {
                     File[] lista = list.listFiles();
                     if (lista != null) {
                         if (lista.length > 0) {
-                            this.borrarDirectoriosTamanio(list, tamanio, archivos);
+                            this.listarDirectoriosTamanio(list, tamanio, archivos);
                         }
                     }
                 } else {
-                    if (list.length() >= (tamanio * 1024 * 1024 * 1024)) {
+                    if (list.length() >= (tamanio * 1024F * 1024F * 1024F)) {
                         archivos.add(list);
                     }
                 }
             }
-               // hilo.notify();
-            
-            
+
         }
 
         return archivos;
