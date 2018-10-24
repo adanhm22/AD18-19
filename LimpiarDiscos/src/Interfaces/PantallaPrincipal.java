@@ -7,6 +7,7 @@ package Interfaces;
 
 import Controlador.Controlador;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -27,7 +28,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         this.setTitle("Limpieza de discos");
         con = new Controlador();
         this.unidad.setModel(new DefaultComboBoxModel(new File[]
-        {new File("/home/adan/Descargas")}));
+        {new File("/home/alumnop/Descargas")}));
     }
 
     /**
@@ -51,12 +52,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setText("Limpieza de disco");
 
         unidad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel2.setText("Seleccionar unidad");
+        jLabel2.setText("Unidad");
 
         botonEspacioLibre.setText("Espacio libre");
         botonEspacioLibre.addActionListener(new java.awt.event.ActionListener() {
@@ -84,6 +86,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jButton3.setText("Borrar ficheros antiguos");
 
         jButton4.setText("Borrar ficheros duplicados");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -94,13 +101,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(unidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(botonEspacioLibre, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
+                        .addGap(74, 74, 74)
+                        .addComponent(botonEspacioLibre, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))
                     .addComponent(botonCarpetasVacias, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(botonGrandes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botonGrandes, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -150,12 +157,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonEspacioLibreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEspacioLibreActionPerformed
         // TODO add your handling code here:
         int index = this.unidad.getSelectedIndex();
-        JOptionPane.showMessageDialog(this, " Hay un total de " + con.espacioLibre(index)
+        
+        JOptionPane.showMessageDialog(this, " Hay un total de " +new DecimalFormat("#.##").format(con.espacioLibre(index)) 
                 + " gb libres", "Espacio libre", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_botonEspacioLibreActionPerformed
 
@@ -196,6 +205,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_botonGrandesActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments

@@ -18,10 +18,10 @@ public class Controlador {
 
     private int contador;
 
-    public long espacioLibre(int unidad) {
+    public float espacioLibre(int unidad) {
 
         File raiz = new File(File.listRoots()[unidad].getAbsolutePath());
-        return raiz.getFreeSpace() / 1024 / 1024 / 1024;
+        return raiz.getFreeSpace() / 1024f / 1024f / 1024f;
     }
 
     public int borrarDirectoriosVacios(String padre){
