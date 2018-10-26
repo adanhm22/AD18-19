@@ -7,8 +7,13 @@ package Interfaces;
 
 import Controlador.Controlador;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
@@ -208,7 +213,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        Map<File,File> duplicados = new HashMap<>();
         
+        try {
+            con.comprobarIgualesCarpeta((File)this.unidad.getSelectedItem(), duplicados);
+        } catch (IOException ex) {
+            Logger.getLogger(PantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        new PantallaDuplicados(this, true,duplicados,con).setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**

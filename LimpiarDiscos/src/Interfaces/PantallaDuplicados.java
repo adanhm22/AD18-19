@@ -5,6 +5,16 @@
  */
 package Interfaces;
 
+import Controlador.Controlador;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -14,12 +24,23 @@ import javax.swing.table.DefaultTableModel;
  */
 public class PantallaDuplicados extends javax.swing.JDialog {
 
+    Map<File, File> mapa;
+    Controlador con;
+    List<File> ficherosDuplicados;
+
     /**
      * Creates new form PantallaDuplicados
      */
-    public PantallaDuplicados(java.awt.Frame parent, boolean modal) {
+    public PantallaDuplicados(java.awt.Frame parent, boolean modal, Map<File, File> mapa, Controlador con) {
         super(parent, modal);
         initComponents();
+        this.mapa = mapa;
+        this.rellenarLista();
+        this.con = con;
+        this.ficherosDuplicados= new ArrayList<>();
+        mapa.keySet().forEach((value) -> {
+            ficherosDuplicados.add(value);
+        });
     }
 
     /**
@@ -96,27 +117,52 @@ public class PantallaDuplicados extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(comprobacionBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(borrarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(borrarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comprobacionBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void comprobacionBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comprobacionBotonActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            this.mapa = con.comprobarIgualesMap(mapa);
+        } catch (IOException ex) {
+            Logger.getLogger(PantallaDuplicados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.rellenarLista();
     }//GEN-LAST:event_comprobacionBotonActionPerformed
 
     private void borrarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarBotonActionPerformed
         // TODO add your handling code here:
-        
+        if(tabla.getSelectedRows().length==0)
+            JOptionPane.showMessageDialog(this, "no has seleccionado nada");
+        else{
+            List<File> ficherosBorrar = new ArrayList<>();
+            for (int selectedRow : tabla.getSelectedRows()) {
+                File fichero = this.ficherosDuplicados.get(selectedRow);
+                this.mapa.remove(fichero);
+                ficherosBorrar.add(fichero);
+            }
+            con.borrarArchivos(ficherosBorrar);
+            
+            JOptionPane.showMessageDialog(this, "se han borrado "+ficherosBorrar.size()+" archivos");
+            this.rellenarLista();
+        }
     }//GEN-LAST:event_borrarBotonActionPerformed
 
-    public void rellenarLista(){
-        String[] columnas = {"archivo 1","archivo 2"};
-        DefaultTableModel dtm = new DefaultTableModel(columnas,0);
-        
+    public void rellenarLista() {
+        String[] columnas = {"archivo original", "archivo duplicado"};
+        DefaultTableModel dtm = new DefaultTableModel(columnas, 0);
+        String[] fila = new String[2];
+        for (File columna : this.mapa.keySet()) {
+            fila[0] = this.mapa.get(columna).getName();
+            fila[1] = columna.getName();
+            dtm.addRow(fila);
+        }
+        this.tabla.setModel(dtm);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

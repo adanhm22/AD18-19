@@ -7,8 +7,13 @@ package Controlador;
 
 import Interfaces.PantallaPrincipal;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import modelo.Utiles;
 
 /**
  *
@@ -85,5 +90,54 @@ public class Controlador {
         }
 
         return archivos;
+    }
+    
+    public void comprobarIgualesCarpeta(File padre,Map<File,File> listaBorrar,List<File>... lista) throws IOException{
+        if(padre==null|lista==null|listaBorrar==null)
+            throw new IllegalArgumentException("Los parametros de entrada no pueden ser nulos");
+        if(lista.length>1)
+            throw new IllegalArgumentException("no puedes tener mas de 1 lista");
+        List<File> lista2;
+        if(lista.length==0){
+            lista2 = new ArrayList<>();
+        }else{
+            lista2=lista[0];
+        }
+            
+        
+        File[] hijos=padre.listFiles();
+        if(hijos!=null)
+        for (File hijo : hijos) {
+            if(hijo.isDirectory()){
+                if(!Files.isSymbolicLink(hijo.toPath()))
+                this.comprobarIgualesCarpeta(hijo,listaBorrar,lista2);
+            } else{
+                if(!lista2.isEmpty()){
+                    boolean igual=false;
+                    for (File file : lista2) {
+                        if(Utiles.compararArchivos(hijo, file)){
+                            listaBorrar.put(hijo,file);
+                            igual=true;
+                        }
+                    }
+                     if(!igual){
+                            lista2.add(hijo);
+                     }
+                }else{
+                    lista2.add(hijo);
+                }
+                    
+            }
+        }
+    }
+    
+    
+    public Map<File,File> comprobarIgualesMap(Map<File,File> mapa) throws IOException{
+        Map<File,File> mapaComprobacion=new HashMap<>();
+        for (File file : mapa.keySet()) {
+            if(Utiles.compararArchivosIntensivo(file, mapa.get(file)))
+                mapaComprobacion.put(file, mapa.get(file));
+        }
+        return mapaComprobacion;
     }
 }

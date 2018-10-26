@@ -24,9 +24,16 @@ public class Utiles {
      * @throws IOException
      */
     public static boolean compararArchivos(File fich1, File fich2) throws IOException {
-        String extension1, extension2;
+        try{
+        String extension1 = null, extension2 = null;
+        if(fich1.getName().contains(".")&&fich2.getName().contains(".")){
         extension1 = fich1.getName().substring(fich1.getName().lastIndexOf("."));
         extension2 = fich2.getName().substring(fich2.getName().lastIndexOf("."));
+        }else if(!fich1.getName().contains(".")&&!fich2.getName().contains(".")){
+            extension1="";
+            extension2="";
+        }else
+            return false;
 
         if (fich1.length() == fich2.length()) {
             if (extension1.equals(extension2)) {
@@ -37,8 +44,9 @@ public class Utiles {
                         if (bytes1[bytes1.length - 1] == bytes2[bytes2.length - 1]) {
                             int mitad = bytes1.length / 2;
                             if (bytes1[mitad] == bytes2[mitad]) {
-                                if (((bytes1[1] + bytes1[2]) % bytes1[3]) == (((bytes2[1] + bytes2[2]) % bytes2[3]))) {
-                                    if (bytes1[20] % bytes1[22] == bytes2[20] % bytes2[22]) {
+                                if (((bytes1[1] + bytes1[2]) - bytes1[3]) == (((bytes2[1] + bytes2[2]) - bytes2[3]))) {
+                                    if (bytes1[20] + bytes1[22] == bytes2[20] + bytes2[22]) {
+                                        if((bytes1[bytes1.length-22]+bytes1[mitad+5])==(bytes1[bytes2.length-22]+bytes2[mitad+5]))
                                         return true;
                                     }
                                 }
@@ -55,6 +63,8 @@ public class Utiles {
                 }
 
             }
+        }
+        }catch(java.nio.file.FileSystemException ex){
         }
         return false;
     }
