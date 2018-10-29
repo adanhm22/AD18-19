@@ -32,8 +32,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         initComponents();
         this.setTitle("Limpieza de discos");
         con = new Controlador();
-        this.unidad.setModel(new DefaultComboBoxModel(new File[]
-        {new File("/home/alumnop/Descargas")}));
+        this.unidad.setModel(new DefaultComboBoxModel(con.LocalizacionesImportantes()));
     }
 
     /**
@@ -214,6 +213,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         Map<File,File> duplicados = new HashMap<>();
+        
+        //preguntar si quiere comprobar de carpetas en concreto.
         
         try {
             con.comprobarIgualesCarpeta((File)this.unidad.getSelectedItem(), duplicados);

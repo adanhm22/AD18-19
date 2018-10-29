@@ -53,7 +53,8 @@ public class Controlador {
     }
 
     public List<File> listarDirectoriosTamanio(File raiz, int tamanio) {
-
+        if(raiz==null)
+            throw new IllegalArgumentException("raiz no puede ser nulo");
         List<File> archivos = new ArrayList<>();
         return this.listarDirectoriosTamanio(raiz, tamanio, archivos);
     }
@@ -139,5 +140,16 @@ public class Controlador {
                 mapaComprobacion.put(file, mapa.get(file));
         }
         return mapaComprobacion;
+    }
+    
+    public File[] LocalizacionesImportantes(){
+        String separador = System.lineSeparator();
+        File[] ficheros = null;
+       // if(separador.equals("\r\n")){
+            ficheros = File.listRoots();
+       // }else{
+            
+      //  }
+        return ficheros;
     }
 }

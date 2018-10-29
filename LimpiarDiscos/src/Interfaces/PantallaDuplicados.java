@@ -6,6 +6,9 @@
 package Interfaces;
 
 import Controlador.Controlador;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ public class PantallaDuplicados extends javax.swing.JDialog {
     Map<File, File> mapa;
     Controlador con;
     List<File> ficherosDuplicados;
+    Informacion inf;
 
     /**
      * Creates new form PantallaDuplicados
@@ -73,6 +77,19 @@ public class PantallaDuplicados extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tabla.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                tablaMouseMoved(evt);
+            }
+        });
+        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                tablaMouseReleased(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                tablaMouseExited(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabla);
 
         comprobacionBoton.setText("<html><body><p>Comprobacion</p></br><p>intensiva</p></body></html>");
@@ -152,6 +169,23 @@ public class PantallaDuplicados extends javax.swing.JDialog {
             this.rellenarLista();
         }
     }//GEN-LAST:event_borrarBotonActionPerformed
+
+    private void tablaMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseMoved
+        // TODO add your handling code here:
+        this.inf = new Informacion(this, false, this.ficherosDuplicados.get(0));
+        this.inf.setLocation(new Point(evt.getXOnScreen(), evt.getYOnScreen()));
+        this.inf.setVisible(true);
+    }//GEN-LAST:event_tablaMouseMoved
+
+    private void tablaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseExited
+        // TODO add your handling code here:
+        this.inf.dispose();
+    }//GEN-LAST:event_tablaMouseExited
+
+    private void tablaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseReleased
+        // TODO add your handling code here:
+        this.inf.dispose();
+    }//GEN-LAST:event_tablaMouseReleased
 
     public void rellenarLista() {
         String[] columnas = {"archivo original", "archivo duplicado"};
