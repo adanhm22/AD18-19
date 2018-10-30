@@ -32,7 +32,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         initComponents();
         this.setTitle("Limpieza de discos");
         con = new Controlador();
-        this.unidad.setModel(new DefaultComboBoxModel(con.LocalizacionesImportantes()));
+        this.unidad.setModel(new DefaultComboBoxModel(con.listarUnidadesByMario()));
+        //this.unidad.setModel(new DefaultComboBoxModel(new File[]
+        //{new File("/home/alumnop/Descargas")}));
     }
 
     /**

@@ -41,10 +41,11 @@ public class PantallaDuplicados extends javax.swing.JDialog {
         this.mapa = mapa;
         this.rellenarLista();
         this.con = con;
-        this.ficherosDuplicados= new ArrayList<>();
+        this.ficherosDuplicados = new ArrayList<>();
         mapa.keySet().forEach((value) -> {
             ficherosDuplicados.add(value);
         });
+        tabla.setFocusable(true);
     }
 
     /**
@@ -83,9 +84,6 @@ public class PantallaDuplicados extends javax.swing.JDialog {
             }
         });
         tabla.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                tablaMouseReleased(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 tablaMouseExited(evt);
             }
@@ -154,9 +152,9 @@ public class PantallaDuplicados extends javax.swing.JDialog {
 
     private void borrarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarBotonActionPerformed
         // TODO add your handling code here:
-        if(tabla.getSelectedRows().length==0)
+        if (tabla.getSelectedRows().length == 0) {
             JOptionPane.showMessageDialog(this, "no has seleccionado nada");
-        else{
+        } else {
             List<File> ficherosBorrar = new ArrayList<>();
             for (int selectedRow : tabla.getSelectedRows()) {
                 File fichero = this.ficherosDuplicados.get(selectedRow);
@@ -164,28 +162,28 @@ public class PantallaDuplicados extends javax.swing.JDialog {
                 ficherosBorrar.add(fichero);
             }
             con.borrarArchivos(ficherosBorrar);
-            
-            JOptionPane.showMessageDialog(this, "se han borrado "+ficherosBorrar.size()+" archivos");
+
+            JOptionPane.showMessageDialog(this, "se han borrado " + ficherosBorrar.size() + " archivos");
             this.rellenarLista();
         }
     }//GEN-LAST:event_borrarBotonActionPerformed
 
     private void tablaMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseMoved
         // TODO add your handling code here:
-        this.inf = new Informacion(this, false, this.ficherosDuplicados.get(0));
-        this.inf.setLocation(new Point(evt.getXOnScreen(), evt.getYOnScreen()));
-        this.inf.setVisible(true);
+        if (this.inf == null) {
+
+            this.inf = new Informacion(this, false, this.ficherosDuplicados.get(0));
+            this.inf.setLocation(new Point(evt.getXOnScreen(), evt.getYOnScreen()));
+            this.inf.setVisible(true);
+        }
     }//GEN-LAST:event_tablaMouseMoved
 
     private void tablaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseExited
         // TODO add your handling code here:
+        if(this.inf!=null)
         this.inf.dispose();
+        this.inf=null;
     }//GEN-LAST:event_tablaMouseExited
-
-    private void tablaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseReleased
-        // TODO add your handling code here:
-        this.inf.dispose();
-    }//GEN-LAST:event_tablaMouseReleased
 
     public void rellenarLista() {
         String[] columnas = {"archivo original", "archivo duplicado"};
@@ -196,6 +194,7 @@ public class PantallaDuplicados extends javax.swing.JDialog {
             fila[1] = columna.getName();
             dtm.addRow(fila);
         }
+        
         this.tabla.setModel(dtm);
     }
 

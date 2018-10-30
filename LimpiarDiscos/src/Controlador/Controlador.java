@@ -5,11 +5,14 @@
  */
 package Controlador;
 
-import Interfaces.PantallaPrincipal;
+
+
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,14 +145,85 @@ public class Controlador {
         return mapaComprobacion;
     }
     
-    public File[] LocalizacionesImportantes(){
+    /**
+     * lista las unidades de tu pc
+     * @return 
+     */
+    public File[] listarUnidadesByMario(){
         String separador = System.lineSeparator();
         File[] ficheros = null;
-       // if(separador.equals("\r\n")){
+        List<File> ficherosOtrosSistemas;
+        //return \r\n si es windows
+        if(separador.equals("\r\n")){
+            //en windows es tan sencillo como esto.
             ficheros = File.listRoots();
-       // }else{
+       }else{
+            //opara el resto de sistemas operativos
+            String so = System.getProperty("os.name");
+            switch (so.toLowerCase()) {
+                case "linux":
+                    ficherosOtrosSistemas=new ArrayList<File>();
+                    ficheros = this.listarLinux(ficherosOtrosSistemas);
+                    break;
+                case "macOs":
+                    throw new UnsupportedOperationException("No soportado aún");
+                   // break;
+                    
+                default:
+                    throw new UnsupportedOperationException("No soportado aún");
+            }
             
-      //  }
+        }
         return ficheros;
     }
+    
+    /**
+     * lista los ficheros de linux
+     * @param listaFicheros
+     * @return 
+     */
+    private File[] listarLinux(List<File> listaFicheros){
+        listaFicheros.add(File.listRoots()[0]);
+        //ficheros en mnt
+        File mnt = new File("/mnt");
+        if(mnt.exists()){
+            File[] montados = mnt.listFiles();
+            //comprobamos si hay ficheros en mnt
+            if(montados.length!=0)
+                //los añadimos
+                listaFicheros.addAll(Arrays.asList(montados));
+        }
+        //ficheros en media
+        File media = new File("/media");
+        //comprobamos si existe media
+        if(media.exists()){
+            File usuarios = new File ("/home");
+            //listamos las carpetas de /home
+            String[] carpetasUsusarios = usuarios.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    if(new File (dir.getAbsolutePath()+File.pathSeparator+name).isDirectory())
+                        return true;
+                    return false;
+                }
+            });
+            //comprobamos por cada usuario si hay carpeta en media
+            for (File listaMedia : media.listFiles()) {
+                boolean estaUsuario=false;
+                for (String nombreUsuario : usuarios.list()) 
+                    if(listaMedia.getName().equals(nombreUsuario)){
+                        //si la hay añadimos todo lo que hay dentro en la lista
+                        listaFicheros.addAll(Arrays.asList(listaMedia.listFiles()));
+                        estaUsuario=true;
+                    }
+                //si la carpeta actual no es de un usuario lo añadimos
+                if(!estaUsuario)
+                    listaFicheros.add(listaMedia);
+            }
+            
+        }
+        
+        return  listaFicheros.toArray(new File[listaFicheros.size()]);
+    }
+    
 }
