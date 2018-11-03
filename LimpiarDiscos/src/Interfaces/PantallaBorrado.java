@@ -26,7 +26,7 @@ public class PantallaBorrado extends javax.swing.JDialog {
      * Creates new form PantallaBorrado
      */
     public PantallaBorrado(java.awt.Frame parent, boolean modal, Controlador con, List<File> lista) {
-        super(parent, modal);
+        super(parent,parent.getTitle(), modal);
         initComponents();
         this.setTitle("Pantalla de borrado");
         this.con = con;

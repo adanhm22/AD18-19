@@ -8,13 +8,14 @@ package Interfaces;
 import Controlador.Controlador;
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
@@ -23,7 +24,8 @@ import javax.swing.JOptionPane;
  */
 public class PantallaPrincipal extends javax.swing.JFrame {
 
-    Controlador con;
+    private Controlador con;
+    private List<File> unidades;
 
     /**
      * Creates new form PantallaPrincipal
@@ -32,9 +34,22 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         initComponents();
         this.setTitle("Limpieza de discos");
         con = new Controlador();
-        this.unidad.setModel(new DefaultComboBoxModel(con.listarUnidadesByMario()));
-        //this.unidad.setModel(new DefaultComboBoxModel(new File[]
-        //{new File("/home/alumnop/Descargas")}));
+        try  {
+            unidades = new ArrayList<>(Arrays.asList(con.listarUnidadesByMario()));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "el SO no es completamente "
+                    + "compatible, elije una carpeta para poder usar el progarama");
+            JFileChooser jf = new JFileChooser();
+            jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int seleccion = jf.showOpenDialog(this);
+            if(seleccion==JFileChooser.APPROVE_OPTION)
+                unidades.add(jf.getSelectedFile());
+            else
+                dispose();
+        }
+        List<String> nombreUnidades = new ArrayList<>();
+        unidades.forEach((file) -> nombreUnidades.add(File.separator+file.getName()));
+        this.unidad.setModel(new DefaultComboBoxModel(nombreUnidades.toArray()));
     }
 
     /**
@@ -55,7 +70,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         botonGrandes = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        botonDuplicados = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -81,6 +96,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         });
 
         jButton1.setText("Borrar archivos por categoria");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         botonGrandes.setText("Borrar archivos de gran tamaño");
         botonGrandes.addActionListener(new java.awt.event.ActionListener() {
@@ -90,11 +110,16 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         });
 
         jButton3.setText("Borrar ficheros antiguos");
-
-        jButton4.setText("Borrar ficheros duplicados");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        botonDuplicados.setText("Borrar ficheros duplicados");
+        botonDuplicados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonDuplicadosActionPerformed(evt);
             }
         });
 
@@ -115,7 +140,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     .addComponent(botonCarpetasVacias, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(botonGrandes, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(botonDuplicados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -133,7 +158,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4)
+                .addComponent(botonDuplicados)
                 .addGap(18, 18, 18)
                 .addComponent(botonCarpetasVacias)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -168,15 +193,16 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void botonEspacioLibreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEspacioLibreActionPerformed
         // TODO add your handling code here:
-        int index = this.unidad.getSelectedIndex();
         
-        JOptionPane.showMessageDialog(this, " Hay un total de " +new DecimalFormat("#.##").format(con.espacioLibre(index)) 
-                + " gb libres", "Espacio libre", JOptionPane.INFORMATION_MESSAGE);
+        System.out.println(this.unidades.get(this.unidad.getSelectedIndex()).getFreeSpace());
+        JOptionPane.showMessageDialog(this, " Hay un total de " 
+                +con.espacioLibreFormateado(this.unidades.get(this.unidad.getSelectedIndex()))
+                + " libres", "Espacio libre", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_botonEspacioLibreActionPerformed
 
     private void botonCarpetasVaciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCarpetasVaciasActionPerformed
         // TODO add your handling code here:
-        File index = (File) this.unidad.getSelectedItem();
+        File index = this.unidades.get(this.unidad.getSelectedIndex());
         int opcionPanel = JOptionPane.showConfirmDialog(this,
                 "¿quieres borrar carpetas vacias?", "Borrado de carpetas",
                 JOptionPane.YES_NO_OPTION);
@@ -204,7 +230,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 JOptionPane.QUESTION_MESSAGE,null, lanzar, "1");
         
         if(seleccion!=-1){
-            File archivo = (File) this.unidad.getSelectedItem();
+            File archivo = this.unidades.get(this.unidad.getSelectedIndex());
             List<File> listarDirectoriosTamanio = con.listarDirectoriosTamanio(archivo,lanzar[seleccion]);
             new PantallaBorrado(this, true, con, listarDirectoriosTamanio).setVisible(true);
         }
@@ -212,19 +238,43 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         
     }//GEN-LAST:event_botonGrandesActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void botonDuplicadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDuplicadosActionPerformed
         // TODO add your handling code here:
         Map<File,File> duplicados = new HashMap<>();
-        
+        File ficheroBusqueda=null;
+        JFileChooser jf = new JFileChooser(this.unidades.get(this.unidad.getSelectedIndex()));
+        jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         //preguntar si quiere comprobar de carpetas en concreto.
+        int seleccion = JOptionPane.showConfirmDialog(this, "¿Quiere comprobar solo de una carpeta especifica?,"
+                + " sino este proceso podria tardar horas", "comprobar iguales"
+                , JOptionPane.YES_NO_CANCEL_OPTION);
+        if(seleccion==JOptionPane.YES_OPTION){
+            int seleccionFile = jf.showOpenDialog(this);
+            if (seleccionFile==JFileChooser.APPROVE_OPTION) 
+                    ficheroBusqueda=jf.getSelectedFile();
+        }else if (seleccion == JOptionPane.NO_OPTION)
+            ficheroBusqueda= this.unidades.get(this.unidad.getSelectedIndex());
         
-        try {
-            con.comprobarIgualesCarpeta((File)this.unidad.getSelectedItem(), duplicados);
-        } catch (IOException ex) {
-            Logger.getLogger(PantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        if(ficheroBusqueda!=null){
+            try {
+                con.comprobarIgualesCarpeta(ficheroBusqueda,duplicados);
+            } catch (IOException ex){}
+            new PantallaDuplicados(this, true,duplicados,con).setVisible(true);
         }
-        new PantallaDuplicados(this, true,duplicados,con).setVisible(true);
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_botonDuplicadosActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        JDialog dialo= new JDialog(this);
+        dialo.add(this.botonCarpetasVacias);
+        dialo.setSize(this.getSize());
+        
+        dialo.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -263,11 +313,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonCarpetasVacias;
+    private javax.swing.JButton botonDuplicados;
     private javax.swing.JButton botonEspacioLibre;
     private javax.swing.JButton botonGrandes;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

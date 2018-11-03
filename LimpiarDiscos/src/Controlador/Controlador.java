@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,10 +27,20 @@ public class Controlador {
 
     private int contador;
 
-    public float espacioLibre(int unidad) {
-
-        File raiz = new File(File.listRoots()[unidad].getAbsolutePath());
-        return raiz.getFreeSpace() / 1024f / 1024f / 1024f;
+    public String espacioLibreFormateado (File fichero){
+        if(fichero==null)
+            throw new IllegalArgumentException("fichero no puede ser vacío");
+        String espacio = null;
+        float espacioLibre = fichero.getFreeSpace();
+        if(espacioLibre%(1024f*1024f*1024)>=1)
+            espacio=new DecimalFormat("#.##").format(espacioLibre/1024f/1024f/1024f)+" Gigas ";
+        else if(espacioLibre%(1024f*1024f)>=1)
+            espacio=new DecimalFormat("#.##").format(espacioLibre/1024f/1024f)+" Megas ";
+        else if(espacioLibre%(1024f)>=1)
+            espacio=new DecimalFormat("#.##").format(espacioLibre/1024f)+" KiloBytes ";
+        else
+            espacio=new DecimalFormat("#.##").format(espacioLibre)+" Bytes";
+        return espacio;
     }
 
     public int borrarDirectoriosVacios(String padre){
@@ -40,7 +51,7 @@ public class Controlador {
 
     private int borrarDirectoriosVacios(File padre) {
         for (File listFile : padre.listFiles()) {
-            if (listFile.isDirectory()) {
+            if (listFile.isDirectory()&&!Files.isSymbolicLink(listFile.toPath())) {
                 File[] lista = listFile.listFiles();
                 if (lista.length == 0) {
                     if (listFile.delete()) {
@@ -51,7 +62,6 @@ public class Controlador {
                 }
             }
         }
-        
         return this.contador;
     }
 
@@ -73,11 +83,9 @@ public class Controlador {
     
     
     private List<File> listarDirectoriosTamanio(File raiz, int tamanio, List archivos) {
-
         for (File list : raiz.listFiles()) {
-
             if (list != null) {
-                if (list.isDirectory()) {
+                if (list.isDirectory()&&!Files.isSymbolicLink(list.toPath())) {
                     File[] lista = list.listFiles();
                     if (lista != null) {
                         if (lista.length > 0) {
@@ -85,7 +93,7 @@ public class Controlador {
                         }
                     }
                 } else {
-                    if (list.length() >= (tamanio * 1024F * 1024F * 1024F)) {
+                    if (list.length() >= (tamanio * 1024F * 1024F)) {
                         archivos.add(list);
                     }
                 }
@@ -150,31 +158,28 @@ public class Controlador {
      * @return 
      */
     public File[] listarUnidadesByMario(){
-        String separador = System.lineSeparator();
         File[] ficheros = null;
         List<File> ficherosOtrosSistemas;
-        //return \r\n si es windows
-        if(separador.equals("\r\n")){
-            //en windows es tan sencillo como esto.
-            ficheros = File.listRoots();
-       }else{
-            //opara el resto de sistemas operativos
+            //nos dice el sisterma op
             String so = System.getProperty("os.name");
             switch (so.toLowerCase()) {
+                case "windows":
+                    ficheros = File.listRoots();
+                    break;
                 case "linux":
-                    ficherosOtrosSistemas=new ArrayList<File>();
+                    ficherosOtrosSistemas=new ArrayList<>();
                     ficheros = this.listarLinux(ficherosOtrosSistemas);
                     break;
                 case "macOs":
                     throw new UnsupportedOperationException("No soportado aún");
-                   // break;
                     
                 default:
                     throw new UnsupportedOperationException("No soportado aún");
             }
             
-        }
+        
         return ficheros;
+
     }
     
     /**
@@ -202,9 +207,7 @@ public class Controlador {
             String[] carpetasUsusarios = usuarios.list(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
-                    if(new File (dir.getAbsolutePath()+File.pathSeparator+name).isDirectory())
-                        return true;
-                    return false;
+                    return new File (dir.getAbsolutePath()+File.pathSeparator+name).isDirectory();
                 }
             });
             //comprobamos por cada usuario si hay carpeta en media
@@ -217,7 +220,7 @@ public class Controlador {
                         estaUsuario=true;
                     }
                 //si la carpeta actual no es de un usuario lo añadimos
-                if(!estaUsuario)
+                if(!estaUsuario&&listaMedia.isDirectory())
                     listaFicheros.add(listaMedia);
             }
             

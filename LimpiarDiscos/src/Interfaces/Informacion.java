@@ -18,7 +18,7 @@ public class Informacion extends javax.swing.JDialog {
      * Creates new form Informacion
      */
     public Informacion(java.awt.Dialog parent, boolean modal,File ficheroInformacion) {
-        super(parent, modal);
+        super(parent,parent.getTitle(), modal);
         initComponents();
         this.ficheroInformacion=ficheroInformacion;
         this.rellenarInformacion();
