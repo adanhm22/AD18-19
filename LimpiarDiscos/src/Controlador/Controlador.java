@@ -214,13 +214,13 @@ public class Controlador {
             for (File listaMedia : media.listFiles()) {
                 boolean estaUsuario=false;
                 for (String nombreUsuario : usuarios.list()) 
-                    if(listaMedia.getName().equals(nombreUsuario)){
+                    if(listaMedia.getName().equals(nombreUsuario)&&listaMedia.list().length!=0){
                         //si la hay añadimos todo lo que hay dentro en la lista
                         listaFicheros.addAll(Arrays.asList(listaMedia.listFiles()));
                         estaUsuario=true;
                     }
                 //si la carpeta actual no es de un usuario lo añadimos
-                if(!estaUsuario&&listaMedia.isDirectory())
+                if(!estaUsuario&&listaMedia.isDirectory()&&listaMedia.list().length!=0)
                     listaFicheros.add(listaMedia);
             }
             
