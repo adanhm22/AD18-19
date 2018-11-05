@@ -22,10 +22,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class PantallaDuplicados extends javax.swing.JDialog {
 
-    Map<File, File> mapa;
-    Controlador con;
-    List<File> ficherosDuplicados;
-    Informacion inf;
+    private Map<File, File> mapa;
+    private Controlador con;
+    private List<File> ficherosDuplicados;
 
     /**
      * Creates new form PantallaDuplicados
@@ -38,6 +37,7 @@ public class PantallaDuplicados extends javax.swing.JDialog {
         this.con = con;
         this.ficherosDuplicados = new ArrayList<>();
         mapa.keySet().forEach((value) -> ficherosDuplicados.add(value));
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -122,6 +122,10 @@ public class PantallaDuplicados extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /***
+     * comprueba si todos los archivos son iguales y actualiza la tabla
+     * @param evt 
+     */
     private void comprobacionBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comprobacionBotonActionPerformed
         try {
             // TODO add your handling code here:
@@ -132,6 +136,10 @@ public class PantallaDuplicados extends javax.swing.JDialog {
         this.rellenarLista();
     }//GEN-LAST:event_comprobacionBotonActionPerformed
 
+    /**
+     * borra los archivos seleccionados
+     * @param evt 
+     */
     private void borrarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarBotonActionPerformed
         // TODO add your handling code here:
         if (tabla.getSelectedRows().length == 0) {
@@ -150,6 +158,9 @@ public class PantallaDuplicados extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_borrarBotonActionPerformed
 
+    /**
+     * rellena la tabla
+     */
     public void rellenarLista() {
         String[] columnas = {"archivo original", "archivo duplicado"};
         DefaultTableModel dtm = new DefaultTableModel(columnas, 0);

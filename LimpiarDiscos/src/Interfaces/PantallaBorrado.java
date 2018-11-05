@@ -7,6 +7,7 @@ package Interfaces;
 
 import Controlador.Controlador;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -31,8 +32,12 @@ public class PantallaBorrado extends javax.swing.JDialog {
         this.con = con;
         this.lista = lista;
         this.rellenarLista();
+        this.setLocationRelativeTo(null);
     }
 
+    /**
+     * rellena la tabla
+     */
     private void rellenarLista() {
         String[] columnas = {"ruta", "nombre", "tamaño"};
         DefaultTableModel dtm = new DefaultTableModel(columnas, 0);
@@ -40,7 +45,7 @@ public class PantallaBorrado extends javax.swing.JDialog {
         for (File file : this.lista) {
             fila[0] = file.getParent();
             fila[1] = file.getName();
-            fila[2] = (file.length() * 1024F * 1024F * 1024F) + " GiB";
+            fila[2] = new DecimalFormat("#.##").format(file.length()/1024f/1024f/1024f)+" GiB";
             dtm.addRow(fila);
         }
         this.tabla.setModel(dtm);
@@ -145,6 +150,10 @@ public class PantallaBorrado extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * borra los archivos seleccionados
+     * @param evt 
+     */
     private void botonBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBorrarActionPerformed
         // TODO add your handling code here:
         String seleccion = "seleccion de archivos";

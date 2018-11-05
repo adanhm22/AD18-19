@@ -13,9 +13,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -43,8 +44,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             JFileChooser jf = new JFileChooser();
             jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int seleccion = jf.showOpenDialog(this);
-            if(seleccion==JFileChooser.APPROVE_OPTION)
+            if(seleccion==JFileChooser.APPROVE_OPTION){
                 unidades.add(jf.getSelectedFile());
+                unidad.addItem(jf.getSelectedFile().getName());
+            }
             else
                 dispose();
         }
@@ -52,6 +55,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         unidades.forEach((file) -> nombreUnidades.add(File.separator+file.getName()));
         this.unidad.setModel(new DefaultComboBoxModel(nombreUnidades.toArray()));
         this.setIconImage(new ImageIcon(getClass().getResource("/images/floppy.png")).getImage());
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -66,7 +70,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jProgressBar1 = new javax.swing.JProgressBar();
         jLabel1 = new javax.swing.JLabel();
         botonGrandes = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        botonSeguro = new javax.swing.JButton();
         botonDuplicados = new javax.swing.JButton();
         botonCarpetasVacias = new javax.swing.JButton();
         botonEspacioLibre = new javax.swing.JButton();
@@ -83,7 +87,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         botonGrandes.setName("tamanio"); // NOI18N
         botonGrandes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton3MouseEntered(evt);
+                botonSeguroMouseEntered(evt);
             }
         });
         botonGrandes.addActionListener(new java.awt.event.ActionListener() {
@@ -92,16 +96,16 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Borrar antiguos");
-        jButton3.setName("antiguos"); // NOI18N
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+        botonSeguro.setText("Borrado seguro");
+        botonSeguro.setName("seguro"); // NOI18N
+        botonSeguro.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton3MouseEntered(evt);
+                botonSeguroMouseEntered(evt);
             }
         });
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        botonSeguro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                botonSeguroActionPerformed(evt);
             }
         });
 
@@ -109,7 +113,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         botonDuplicados.setName("duplicados"); // NOI18N
         botonDuplicados.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton3MouseEntered(evt);
+                botonSeguroMouseEntered(evt);
             }
         });
         botonDuplicados.addActionListener(new java.awt.event.ActionListener() {
@@ -122,7 +126,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         botonCarpetasVacias.setName("vacias"); // NOI18N
         botonCarpetasVacias.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton3MouseEntered(evt);
+                botonSeguroMouseEntered(evt);
             }
         });
         botonCarpetasVacias.addActionListener(new java.awt.event.ActionListener() {
@@ -162,7 +166,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(botonGrandes)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonSeguro, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
                                         .addComponent(botonDuplicados))
                                     .addGroup(layout.createSequentialGroup()
@@ -187,7 +191,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonGrandes)
-                    .addComponent(jButton3)
+                    .addComponent(botonSeguro)
                     .addComponent(botonDuplicados)
                     .addComponent(botonCarpetasVacias))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -213,6 +217,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 "¿quieres borrar carpetas vacias?", "Borrado de carpetas",
                 JOptionPane.YES_NO_OPTION);
         if (opcionPanel == JOptionPane.YES_OPTION) {
+            this.descripcion.setText("Espere...esto puede tardar bastante");
             int contador = con.borrarDirectoriosVacios(index.getAbsolutePath());
             if (contador > 0) {
                 JOptionPane.showMessageDialog(this, "se han eliminado " + contador
@@ -223,8 +228,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         + " carpeta vacía", "Borrado de carpetas",
                         JOptionPane.INFORMATION_MESSAGE);
             }
-        } else if (opcionPanel == JOptionPane.NO_OPTION) {
-            JOptionPane.showMessageDialog(this, "Pues ok");
         }
     }//GEN-LAST:event_botonCarpetasVaciasActionPerformed
 
@@ -236,6 +239,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 JOptionPane.QUESTION_MESSAGE,null, lanzar, "1");
         
         if(seleccion!=-1){
+            JOptionPane.showMessageDialog(this, "esto puede tardar...");
             File archivo = this.unidades.get(this.unidad.getSelectedIndex());
             List<File> listarDirectoriosTamanio = con.listarDirectoriosTamanio(archivo,lanzar[seleccion]);
             new PantallaBorrado(this, true, con, listarDirectoriosTamanio).setVisible(true);
@@ -262,23 +266,36 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             ficheroBusqueda= this.unidades.get(this.unidad.getSelectedIndex());
         
         if(ficheroBusqueda!=null){
+            
             try {
+                JOptionPane.showMessageDialog(this, "esto puede tardar...");
                 con.comprobarIgualesCarpeta(ficheroBusqueda,duplicados);
             } catch (IOException ex){}
+            if(!duplicados.isEmpty())
             new PantallaDuplicados(this, true,duplicados,con).setVisible(true);
+            else
+                JOptionPane.showMessageDialog(this,"no se ha encontrado ningun archivo similar");
         }
     }//GEN-LAST:event_botonDuplicadosActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void botonSeguroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSeguroActionPerformed
         // TODO add your handling code here:
-        JDialog dialo= new JDialog(this);
-        dialo.add(this.botonCarpetasVacias);
-        dialo.setSize(this.getSize());
-        
-        dialo.setVisible(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+        JFileChooser jf = new JFileChooser(this.unidades.get(this.unidad.getSelectedIndex()));
+        jf.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        int seleccion = jf.showOpenDialog(this);
+        if(seleccion==JFileChooser.APPROVE_OPTION){
+            JOptionPane.showMessageDialog(this, "esto puede tardar...");
+            int borrados = 0;
+            try {
+                borrados = con.borradoSeguro(jf.getSelectedFile());
+            } catch (IOException ex) {
+                Logger.getLogger(PantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("se han borrado "+borrados);
+        }
+    }//GEN-LAST:event_botonSeguroActionPerformed
 
-    private void jButton3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseEntered
+    private void botonSeguroMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSeguroMouseEntered
         // TODO add your handling code here:
         String cabecerahtml = "<html><head></head><body> ";
         String finalhtml= "</body></html>";
@@ -292,10 +309,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 this.descripcion.setText(
                         cabecerahtml+"elimina todas las carpetas vacias en el disco seleccionado"+finalhtml);
                 break;
-            case "antiguos":
+            case "seguro":
                 this.descripcion.setText(
-                cabecerahtml+"busca archivos con una antiguedad de mas de 1 mes,"
-                        + " te los muestra en una tabla para borrarlos"+finalhtml);
+                cabecerahtml+"permite borrar una carpeta (o archivo) de manera segura,"
+                        + " haciendo que sea mas difícil de recuperar con "
+                        + "programas de recuperación"+finalhtml);
                 break;
             case "duplicados":
                 this.descripcion.setText(
@@ -306,7 +324,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             default:
                 throw new AssertionError();
         }
-    }//GEN-LAST:event_jButton3MouseEntered
+    }//GEN-LAST:event_botonSeguroMouseEntered
 
     /**
      * @param args the command line arguments
@@ -348,8 +366,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton botonDuplicados;
     private javax.swing.JButton botonEspacioLibre;
     private javax.swing.JButton botonGrandes;
+    private javax.swing.JButton botonSeguro;
     private javax.swing.JLabel descripcion;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JProgressBar jProgressBar1;

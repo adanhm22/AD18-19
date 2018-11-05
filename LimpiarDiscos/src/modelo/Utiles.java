@@ -6,6 +6,7 @@
 package modelo;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -92,6 +93,25 @@ public class Utiles {
                 }
             }
             return true;
+        }
+        return false;
+    }
+    
+    /**
+     * cambia un cuarto del archivo para que sea ilegible y despues lo borra
+     * @param fichero
+     * @return true si ha sido posible borrarlo, false si no
+     * @throws IOException 
+     */
+    public static boolean borradoSeguro(File fichero) throws IOException{
+        FileOutputStream fos = new FileOutputStream(fichero);
+        byte[] bytee = {1};
+        byte[] ficheroBytes = Files.readAllBytes(fichero.toPath());
+        if(ficheroBytes.length>0){
+        for (int i = 0; i < ficheroBytes.length/4; i++) {
+                fos.write(bytee, i, 1);
+        }
+        return fichero.delete();
         }
         return false;
     }
