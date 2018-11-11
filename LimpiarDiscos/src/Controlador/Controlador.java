@@ -92,9 +92,9 @@ public class Controlador {
      * @throws IOException
      */
     public int borradoSeguro (File directorio) throws IOException{
-        int numBorrados=0;
-        this.borradoSeguroRecursivo(directorio, numBorrados);
-        return numBorrados;
+        this.contador=0;
+        this.borradoSeguroRecursivo(directorio);
+        return this.contador;
     }
     
     /**
@@ -104,19 +104,25 @@ public class Controlador {
      * @return
      * @throws IOException
      */
-    private int borradoSeguroRecursivo(File directorio,Integer numBorrados) throws IOException{
-        if (!directorio.isDirectory()){
-            if(directorio!=null)
-                if(Utiles.borradoSeguro(directorio))
-                    numBorrados++;
-        }else if(directorio.list().length>1){
-            for (File listFile : directorio.listFiles()) {
-                if(directorio!=null)
-                    return this.borradoSeguroRecursivo(listFile, numBorrados);
-            }
+    private int borradoSeguroRecursivo(File directorio) throws IOException{
+        if(directorio.isDirectory()){
+        for (File listFile : directorio.listFiles()) {
+            if (listFile.isDirectory()&&!Files.isSymbolicLink(listFile.toPath())) {
+                File[] lista = listFile.listFiles();
+                if (lista.length == 0) {
+                    if (Utiles.borradoSeguro(listFile)) {
+                        contador++;
+                    }
+                } else {
+                    this.borradoSeguroRecursivo(listFile);
+                }
+            }else if (Utiles.borradoSeguro(listFile))
+                    contador++;
         }
-        
-        return numBorrados;
+        }else if (Utiles.borradoSeguro(directorio))
+               contador++;
+            
+        return this.contador;
     }
     
     /**

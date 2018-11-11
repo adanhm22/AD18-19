@@ -291,7 +291,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(PantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("se han borrado "+borrados);
+            if(borrados!=0)
+                JOptionPane.showMessageDialog(this, "se han borrado "+borrados);
+            else
+               JOptionPane.showMessageDialog(this, "No se ha borrado ningun archivo"); 
         }
     }//GEN-LAST:event_botonSeguroActionPerformed
 
